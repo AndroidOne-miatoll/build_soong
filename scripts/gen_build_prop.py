@@ -125,6 +125,9 @@ def parse_args():
   if args.build_thumbprint_file:
     config["BuildThumbprint"] = args.build_thumbprint_file.read().strip()
 
+  config["AOSP_Desc"] = config["BuildDesc"]
+  config["AOSP_Device"] = config["DeviceName"]
+
   override_config(config)
 
   append_additional_system_props(args)
@@ -213,7 +216,7 @@ def generate_build_info(args):
       print(f"ro.build.display.id?={config['BuildId']} {config['BuildKeys']}")
   else:
     # Non-user builds should show detailed build information (See build desc above)
-    print(f"ro.build.display.id?={config['BuildDesc']}")
+    print(f"ro.build.display.id?={config['AOSP_Desc']}")
   print(f"ro.build.version.incremental={config['BuildNumber']}")
   print(f"ro.build.version.sdk={config['Platform_sdk_version']}")
   print(f"ro.build.version.sdk_full={config['Platform_sdk_version_full']}")
@@ -240,6 +243,8 @@ def generate_build_info(args):
   # Only add _asan for a sanitized build if it isn't already a part of the
   # flavor (via a dedicated lunch config for example).
   print(f"ro.build.flavor={config['BuildFlavor']}")
+
+  print(f"ro.aosp.device={config['AOSP_Device']}")
 
   # These values are deprecated, use "ro.product.cpu.abilist"
   # instead (see below).
